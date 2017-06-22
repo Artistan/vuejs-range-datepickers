@@ -1,0 +1,31 @@
+{
+  "version": "0.0.1",
+  "private": false,
+  "license": "MIT",
+  "main": "daterange.vue",
+  "name": "vuejs-range-datepickers",
+  "author": "Charles Peterson <artistan@gmail.com>",
+  "homepage": "https://github.com/Artistan/vuejs-range-datepickers#readme",
+  "description": "Component utilizing VueJS-Datepicker for a Data Range Select for VueJs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Artistan/vuejs-range-datepickers.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Artistan/vuejs-range-datepickers/issues"
+  },
+  "dependencies": {
+    "vuejs-datepicker": "^0.7.16"
+  },
+  "devDependencies": {
+  },
+  "keywords": [
+    "vue",
+    "datepicker",
+    "date-picker",
+    "calendar",
+    "range"
+  ],
+  "scripts": {
+  }
+}
