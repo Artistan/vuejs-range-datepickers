@@ -87,6 +87,19 @@ Inline always open version
 | initial-view          | String       | 'day'       | If 'month' or 'year', open on that view  |
 | disabled-picker       | Boolean      | false       | If true, disable Datepicker on screen    |
 | required              | Boolean      | false       | Sets html required attribute on input    |
+| bootstrap-row         | Boolean      | true        | Sets html styles for .row with even cols |
+| restrict-dates        | Boolean      | true        | Restrict the end date to be past start   |
+| start-label           | String       | "FROM:"     | Adjust/remove a label for the start input|
+| end-label             | String       | "TO:"       | Adjust/remove a label for the end input  |
+| submit-callback       | Function     | null        | Set a callback to handle button event    |
+| submit-text           | String       | "UpDate"    | Sets submit button text                  |
+
+
+## slots
+
+* header-title
+* header-legend
+* button
 
 ## Date formatting
 
@@ -151,7 +164,7 @@ Available languages
 
 ## Live Example
 ---------------
-I have created an [example](https://www.webpackbin.com/bins/-KnCcSqurk2HvNhg3Rj2) vue webapp (documentation [here](https://github.com/Artistan/vuejs-range-datepickers#readme)), demonstrating this range date selector via simple vue app.
+I have created an [example](https://www.webpackbin.com/bins/-KnG3_HTaCSyKotZI-55) vue webapp (documentation [here](https://github.com/Artistan/vuejs-range-datepickers#readme)), demonstrating this range date selector via simple vue app.
 
 
 ## TODOs
