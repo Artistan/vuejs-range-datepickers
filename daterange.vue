@@ -35,6 +35,8 @@
       placeholder: null,
       clearButton: false,
       clearButtonIcon: '',
+      calendarButton: false,
+      calendarButtonIcon: '',
       disabledPicker: false,
       required: true,
       wrapperClass: '',
