@@ -1,8 +1,8 @@
 <template>
     <div class="date-range-picker">
-        <slot name="header"><h3>Select a date range.</h3></slot>
+        <slot name="header-title"><h3>Select a date range.</h3></slot>
         <fieldset class="form-inline">
-            <slot name="header"><legend>Dates</legend></slot>
+            <slot name="header-legend"><legend>Dates</legend></slot>
             <div class="form-group">
                 <label :for="start_id">FROM:</label>
                 <datepicker :id="start_id" :calendar-button="calendarButton" :calendar-button-icon="calendarButtonIcon" :format="format" :language="language" :monday-first="mondayFirst" :initial-view="initialView" :wrapper-class="wrapperClass" :input-class="inputClass" :required="required" :disabled-picker="disabledPicker" :placeholder="placeholder" :inline="inline" :clear-button="clearButton" :clear-button-icon="clearButtonIcon" :name="start_name" v-model="sDate" :disabled="disabled_start" :bootstrap-styling="bootstrapStyles" :highlighted="highlighted_obj"></datepicker>
