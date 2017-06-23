@@ -211,10 +211,13 @@
       if (this.startDate) {
         this.sDate = this.dateInit(this.startDate);
       }
+      this.setValue(this.value);
       if (this.eDate < this.sDate) {
-        this.eDate = null;
-        this.sDate = null;
-        console.error('end date is before start date! -- Resetting all dates');
+        if(this.restrictDates){
+          this.eDate = null;
+          this.sDate = null;
+          console.error('end date is before start date! -- Resetting all dates');
+        }
       }
     },
     init () {
@@ -254,10 +257,10 @@
     methods: {
       setValue (dates) {
         if (!this.endDate && dates.start) {
-          this.eDate = this.dateInit(dates.start);
+          this.eDate = this.dateInit(dates.end);
         }
         if (!this.startDate && dates.end) {
-          this.sDate = this.dateInit(dates.end);
+          this.sDate = this.dateInit(dates.start);
         }
         if (this.eDate < this.sDate) {
           if(this.restrictDates){
