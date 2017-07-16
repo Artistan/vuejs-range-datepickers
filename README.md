@@ -93,7 +93,21 @@ Inline always open version
 | end-label             | String       | "TO:"       | Adjust/remove a label for the end input  |
 | submit-callback       | Function     | null        | Set a callback to handle button event    |
 | submit-text           | String       | "UpDate"    | Sets submit button text                  |
+| disabled-dates        | Array        | []          | Array of Dates|date strings              |
+| no-overlap            | Boolean      | true        | Forces End Date to change if overlapping after start date changed|
+| end-plus              | Number       | 1           | Sets end date to start + end-plus if overlap occurs|
 
+
+## Available data attributes
+This data is used to restrict both calendars for a date range and specific dates that may change
+use the `recommended` disabled-dates property if your data will not change
+```
+defaultDisabledDates: {
+    to: new Date('1990-12-31'),
+    from: new Date('3333-12-31'),
+    dates: []
+},
+```
 
 ## slots
 
@@ -164,14 +178,23 @@ Available languages
 
 ## Live Example
 ---------------
-I have created an [example](https://www.webpackbin.com/bins/-KnG3_HTaCSyKotZI-55) vue webapp (documentation [here](https://github.com/Artistan/vuejs-range-datepickers#readme)), demonstrating this range date selector via simple vue app.
+I have created an [example](https://www.webpackbin.com/bins/-KpBRW5ApXMKlUxne80q) vue webapp (documentation [here](https://github.com/Artistan/vuejs-range-datepickers#readme)), demonstrating this range date selector via simple vue app.
 
 
 ## TODOs
 ---------------
-- get feedback!
+- get more feedback!
 
 
 ## Contributions
 ---------------
 All contributions are welcome: use-cases, documentation, code, patches, bug reports, feature requests, etc. You do not need to be a programmer to speak up!
+
+## version changes
+v1.0.0
+ - start date is no longer restricted by end date.
+ - can disable an array of dates `:disable-dates`
+ - defaults to not allow overlapping disabled dates `:no-overlap`
+ - defaults to `:end-plus="1"` which adds this value to end date if the overlapping forces the end-date to change
+ - `:default-disabled-dates` is the datepicker 'disabled' option for both of the range pickers. this allows for setting max (from), min (to), and dates (disabled individual dates)  that can be modified by parent components
+

@@ -8,7 +8,10 @@ const app = new Vue({
         start: '06-10-2017',
         end: '06-20-2017',
         event: {}
-      }
+      },
+		alreadyReservedDates: [
+			'06-01-2017','06-21-2017','06-22-2017','06-23-2017'
+		]
     };
   },
   methods: {

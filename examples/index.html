@@ -18,7 +18,7 @@
                :start-date="formdata.start" :end-date="formdata.end"
                start-label="" end-label="" :submit-callback="submitIt"
                :bootstrap-styles="true" v-model="formdata"
-                :restrict-dates="false" ></daterange>
+                :restrict-dates="false" :disabled-dates="alreadyReservedDates"></daterange>
     <br/><br/><br/><br/>
     <div class="row">
         <div class="col-sm-12">
