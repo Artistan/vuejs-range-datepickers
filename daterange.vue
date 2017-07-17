@@ -118,6 +118,16 @@
 			minimumDuration: {
 				default: 1
 			},
+			defaultDisabledDates: {
+				value: Object,
+				default: function() {
+					return {
+						to: new Date('1990-12-31'),
+						from: new Date('3333-12-31'),
+						dates: []
+					};
+				}
+			}
 		},
 		data () {
 			// data must be defined here for the child component to have access to it.
@@ -125,13 +135,7 @@
 				eDate: null,
 				sDate: null,
 				disabledStartDates: [],// these change via user interaction and defaultDisabledDates
-				disabledEndDates: [],// these change via user interaction and defaultDisabledDates
-                /* use the prop disabledDates for static dates or this for dates that may change via the partent! */
-				defaultDisabledDates: {
-					to: new Date('1990-12-31'),
-					from: new Date('3333-12-31'),
-					dates: []
-				},
+				disabledEndDates: [],// these change via user interaction and defaultDisabledDates,
 			}
 		},
 		watch: {
