@@ -95,7 +95,7 @@ Inline always open version
 | submit-text           | String       | "UpDate"    | Sets submit button text                  |
 | disabled-dates        | Array        | []          | Array of Dates|date strings              |
 | no-overlap            | Boolean      | true        | Forces End Date to change if overlapping after start date changed|
-| end-plus              | Number       | 1           | Sets end date to start + end-plus if overlap occurs|
+| minimum-duration      | Number       | 1           | Sets end date to start + minimum-duration if overlap occurs|
 
 
 ## Available data attributes
@@ -183,6 +183,7 @@ I have created an [example](https://www.webpackbin.com/bins/-KpBRW5ApXMKlUxne80q
 
 ## TODOs
 ---------------
+- allow minimum-duration to be and array of dates with a duration
 - get more feedback!
 
 
@@ -198,3 +199,7 @@ v1.0.0
  - defaults to `:end-plus="1"` which adds this value to end date if the overlapping forces the end-date to change
  - `:default-disabled-dates` is the datepicker 'disabled' option for both of the range pickers. this allows for setting max (from), min (to), and dates (disabled individual dates)  that can be modified by parent components
 
+
+v1.2.0
+ - removed end-plus , changed to minimum-duration
+ - other date restrictions based on minimum-duration and disabled-dates...

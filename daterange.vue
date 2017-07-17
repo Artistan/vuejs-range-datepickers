@@ -78,10 +78,6 @@
 				value: Boolean,
 				default: true
 			},
-			minimumDuration: {
-				value: Number,
-				default: 1
-			},
 			bootstrapStyles: {
 				value: Boolean,
 				default: true
@@ -119,6 +115,9 @@
 				value: String,
 				default: 'UpDate'
 			},
+			minimumDuration: {
+				default: 1
+			},
 		},
 		data () {
 			// data must be defined here for the child component to have access to it.
@@ -138,10 +137,15 @@
 		watch: {
 			// watching the data is not recommended unless you need to do some major function calls on changes.
 			sDate: function() {
+				this.setDisabledDates();
 				if (this.overlapsDisabledDates() || this.sDate > this.eDate) {
 					// allow the start date to be set to anything not disabled,
 					// but change the end date to this.minimumDuration if there are any conflicts with disabled dates
-					this.eDate = this.addDays(this.sDate, this.minimumDuration);
+					this.eDate = this.addDays(this.sDate, this.minimumDuration+1);
+				}
+				//if it is still overlapping...
+				if(this.overlapsDisabledDates()){
+					alert('Caution: Minimun duration causes overlap of reserved date!');
 				}
 				// check if
 				this.$emit('input', {
@@ -156,6 +160,19 @@
 					end: this.eDate,
 					updated: 'end'
 				});
+			},
+			minimumDuration: function() {
+				// TOD0: allow an array of min dates...
+				this.setDisabledDates();
+				console.log('minimumDuration',this.minimumDuration);
+				if ( this.dayDiff(this.sDate,this.eDate) < this.minimumDuration) {
+					this.eDate = this.addDays(this.sDate, this.minimumDuration + 1);
+				}
+				if(this.overlapsDisabledDates()){
+					if(this.overlapsDisabledDates()) {
+						alert('Caution: Minimun duration causes overlap of reserved date!');
+					}
+				}
 			},
 			value (value) {
 				if (value) {
@@ -181,34 +198,11 @@
 			}
 		},
 		mounted() {
-			// setup disabled dates.
-			var length = this.disabledDates.length;
-			this.disabledStartDates = {};
-			this.disabledEndDates = {};
-			for (var i = 0; i < length; i++) {
-				var d = this.newDay(this.disabledDates[i]);
-				// set to date object for comparisons
-				this.disabledDates[i] = d;
-				// set end dates
-				this.disabledEndDates[d.getTime()] = this.newDay(d);
-				// also disable dates after the start date for the minimum duration
-				for (var j = 1; j < this.minimumDuration; j++) {
-					var dPlusDays = this.addDays(d, j);
-					this.disabledStartDates[dPlusDays.getTime()] = dPlusDays;
-				}
-				// disable the date for start dates
-				this.disabledStartDates[d.getTime()] = this.newDay(d);
-				// also disable dates before that date to allow for a proper end date with the minimum duration!
-				for (var j = 1; j <= this.minimumDuration; j++) {
-					var dMinusDays = this.subDays(d, j);
-					this.disabledStartDates[dMinusDays.getTime()] = dMinusDays;
-				}
-			}
+			this.setDisabledDates();
 		},
 		computed: {
 			days: function() {
-				var timeDiff = Math.abs(this.eDate.getTime() - this.sDate.getTime());
-				return Math.ceil(timeDiff / (1000 * 3600 * 24));
+				return this.dayDiff(this.sDate,this.eDate);
 			},
 			disabled_start: function() {
 				var ret = Object.assign({}, this.defaultDisabledDates);
@@ -259,6 +253,47 @@
 			}
 		},
 		methods: {
+			setDisabledDates() {
+				// setup disabled dates.
+				var length = this.disabledDates.length;
+				this.disabledStartDates = {};
+				this.disabledEndDates = {};
+				for (var i = 0; i < length; i++) {
+					var d = this.newDay(this.disabledDates[i]);
+					// set end dates
+					this.disabledEndDates[d.getTime()] = this.newDay(d);
+					// disable the reserved date for start dates
+					this.disabledStartDates[d.getTime()] = this.newDay(d);
+					if (this.restrictDates) {
+						// also disable dates after the start date for the minimum duration
+						for (var j = 1; j < this.minimumDuration; j++) {
+							var dPlusDays = this.addDays(d, j);
+							this.disabledStartDates[dPlusDays.getTime()] = dPlusDays;
+						}
+						// also disable dates before that date to allow for a proper end date with the minimum duration!
+						for (var j = 1; j <= this.minimumDuration; j++) {
+							var dMinusDays = this.subDays(d, j);
+							this.disabledStartDates[dMinusDays.getTime()] = dMinusDays;
+						}
+					}
+				}
+				// TOD0: allow an array of min dates...and then restrict start dates based on that...
+			},
+			/**
+			 * Returns number of days between two dates
+			 * @param {Date} start
+			 * @param {Date} end
+			 * @return {Number}
+			 */
+			dayDiff (start, end) {
+				const MS_PER_DAY = 1000 * 60 * 60 * 24
+
+				// Discard the time and time-zone information.
+				let utc1 = Date.UTC(start.getFullYear(), start.getMonth(), start.getDate())
+				let utc2 = Date.UTC(end.getFullYear(), end.getMonth(), end.getDate())
+
+				return Math.floor((utc2 - utc1) / MS_PER_DAY)
+			},
 			newDay(date) {
 				if (Object.prototype.toString.call(date) !== '[object Date]') {
 					var d = new Date(date);
@@ -274,8 +309,8 @@
 				return new Date(new Date(d.getTime()).setDate(d.getDate() - subDays));
 			},
 			overlapsDisabledDates(){
-				for (var key in this.disabledDates) {
-					if ((this.disabledDates[key] <= this.eDate && this.disabledDates[key] >= this.sDate)) {
+				for (var key in this.disabledEndDates) {
+					if (this.disabledEndDates[key] <= this.eDate && this.disabledEndDates[key] >= this.sDate) {
 						return true;
 					}
 				}
