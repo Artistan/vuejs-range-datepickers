@@ -8,30 +8,22 @@
             </slot>
             <div class="form-group" :class="{ 'col-sm-5' : bootstrapRow }">
                 <label :for="start_id" v-if="startLabel != ''">{{ startLabel }}</label>
-                <datepicker :id="start_id" :calendar-button="calendarButton" :calendar-button-icon="calendarButtonIcon"
-                            :format="format" :language="language" :monday-first="mondayFirst"
-                            :initial-view="initialView" :wrapper-class="wrapperClass" :input-class="inputClass"
-                            :required="required" :disabled-picker="disabledPicker" :placeholder="placeholder"
-                            :inline="inline" :clear-button="clearButton" :clear-button-icon="clearButtonIcon"
+                <datepicker :id="start_id"
                             :name="start_name" v-model="sDate" :disabled="disabled_start"
-                            :bootstrap-styling="bootstrapStyles" :highlighted="highlighted_obj"></datepicker>
+                            :bootstrap-styling="bootstrapStyles" :highlighted="highlighted_obj" v-bind="$attrs"></datepicker>
             </div>
             <slot name="button">
                 <div class="form-group" :class="{ 'col-sm-2' : bootstrapRow }">
                     <button type="submit" class="btn btn-primary btn-block"
-                            @click="submitIt($event)">{{ submitText }}
+                            @click="submitIt($event)" v-bind="$attrs">{{ submitText }}
                     </button>
                 </div>
             </slot>
             <div class="form-group" :class="{ 'col-sm-5' : bootstrapRow }">
                 <label :for="end_id" v-if="endLabel != ''">{{ endLabel }}</label>
-                <datepicker :id="end_id" :calendar-button="calendarButton" :calendar-button-icon="calendarButtonIcon"
-                            :format="format" :language="language" :monday-first="mondayFirst"
-                            :initial-view="initialView" :wrapper-class="wrapperClass" :input-class="inputClass"
-                            :required="required" :disabled-picker="disabledPicker" :placeholder="placeholder"
-                            :inline="inline" :clear-button="clearButton" :clear-button-icon="clearButtonIcon"
+                <datepicker :id="end_id"
                             :name="end_name" v-model="eDate" :disabled="disabled_end"
-                            :bootstrap-styling="bootstrapStyles" :highlighted="highlighted_obj"></datepicker>
+                            :bootstrap-styling="bootstrapStyles" :highlighted="highlighted_obj" v-bind="$attrs"></datepicker>
             </div>
         </fieldset>
     </div>
@@ -40,6 +32,7 @@
 <script>
 	import Datepicker from 'vuejs-datepicker'
 	export default {
+		inheritAttrs: false,/* allow attributes to pass down to parent were applicable */
 		components: {
 			Datepicker
 		},
@@ -77,10 +70,6 @@
 					return val === null || val instanceof Date || typeof val === 'string'
 				}
 			},
-			eventMsg: {
-				value: String,
-				default: ''
-			},
 			restrictDates: {
 				value: Boolean,
 				default: true
@@ -89,7 +78,7 @@
 				value: Boolean,
 				default: true
 			},
-			endPlus: {
+			minimumDuration: {
 				value: Number,
 				default: 1
 			},
@@ -125,66 +114,10 @@
 				value: String,
 				default: 'TO:'
 			},
-			inline: {
-				value: Boolean,
-				default: false
-			},
-			inputClass: {
-				value: String,
-				default: ''
-			},
-			placeholder: {
-				value: String,
-				default: ''
-			},
-			clearButton: {
-				value: Boolean,
-				default: false
-			},
-			clearButtonIcon: {
-				value: String,
-				default: ''
-			},
-			calendarButton: {
-				value: Boolean,
-				default: false
-			},
-			calendarButtonIcon: {
-				value: String,
-				default: ''
-			},
-			disabledPicker: {
-				value: Boolean,
-				default: false
-			},
-			required: {
-				value: Boolean,
-				default: true
-			},
-			wrapperClass: {
-				value: String,
-				default: ''
-			},
-			initialView: {
-				value: String,
-				default: 'day'
-			},
-			mondayFirst: {
-				value: Boolean,
-				default: false
-			},
-			language: {
-				value: String,
-				default: 'en'
-			},
 			submitCallback: null,
 			submitText: {
 				value: String,
 				default: 'UpDate'
-			},
-			format: {
-				value: String,
-				default: 'dd MMM yyyy'
 			},
 		},
 		data () {
@@ -207,8 +140,8 @@
 			sDate: function() {
 				if (this.overlapsDisabledDates() || this.sDate > this.eDate) {
 					// allow the start date to be set to anything not disabled,
-					// but change the end date to this.endPlus if there are any conflicts with disabled dates
-					this.eDate = this.addDays(this.sDate, this.endPlus);
+					// but change the end date to this.minimumDuration if there are any conflicts with disabled dates
+					this.eDate = this.addDays(this.sDate, this.minimumDuration);
 				}
 				// check if
 				this.$emit('input', {
@@ -254,13 +187,22 @@
 			this.disabledEndDates = {};
 			for (var i = 0; i < length; i++) {
 				var d = this.newDay(this.disabledDates[i]);
+				// set to date object for comparisons
+				this.disabledDates[i] = d;
 				// set end dates
 				this.disabledEndDates[d.getTime()] = this.newDay(d);
+				// also disable dates after the start date for the minimum duration
+				for (var j = 1; j < this.minimumDuration; j++) {
+					var dPlusDays = this.addDays(d, j);
+					this.disabledStartDates[dPlusDays.getTime()] = dPlusDays;
+				}
 				// disable the date for start dates
 				this.disabledStartDates[d.getTime()] = this.newDay(d);
-				// also disable dates after that date to allow for a proper end date!
-				var dMinusOne = this.subDays(d, this.endPlus);
-				this.disabledStartDates[dMinusOne.getTime()] = dMinusOne;
+				// also disable dates before that date to allow for a proper end date with the minimum duration!
+				for (var j = 1; j <= this.minimumDuration; j++) {
+					var dMinusDays = this.subDays(d, j);
+					this.disabledStartDates[dMinusDays.getTime()] = dMinusDays;
+				}
 			}
 		},
 		computed: {
@@ -272,6 +214,7 @@
 				var ret = Object.assign({}, this.defaultDisabledDates);
 				if (this.disabledStartDates && Object.keys(this.disabledStartDates).length > 0) {
 					if (ret.dates && Object.keys(ret.dates).length > 0) {
+						// merge the dates and disabled start dates...
 						ret.dates = Object.values(Object.assign(ret.dates, this.disabledStartDates));
 					} else {
 						ret.dates = Object.values(this.disabledStartDates)
@@ -283,19 +226,20 @@
 				var ret = Object.assign({}, this.defaultDisabledDates);
 				if (this.disabledEndDates && Object.keys(this.disabledEndDates).length > 0) {
 					if (ret.dates && Object.keys(ret.dates).length > 0) {
+						// merge the dates and disabled start dates...
 						ret.dates = Object.values(Object.assign(ret.dates, this.disabledEndDates));
 					} else {
 						ret.dates = Object.values(this.disabledEndDates)
 					}
 				}
 				if (this.restrictDates) {
-					//to: startDate, // Disable everything TO start date
-					// cannot set end date before start date.
-					ret.to = this.sDate;
+					//to: startDate + minimumDuration + 1, // Disable everything upto TO start date + minimumDuration
+					// cannot set end date before start date + minimumDuration + 1
+					ret.to = this.addDays(this.sDate,this.minimumDuration+1) ;
 				}
 				if (this.noOverlap && Object.keys(this.disabledEndDates).length > 0) {
 					// set the "to" date restriction to be the first date after start date...
-					///  the date rance cannot overlap any of the disabled dates..
+					///  the date range cannot overlap any of the disabled dates..
 					ret.from = new Date('9999-12-31');
 					for (var key in this.disabledEndDates) {
 						if (this.disabledEndDates[key] > this.sDate && this.disabledEndDates[key] < ret.from
@@ -330,8 +274,8 @@
 				return new Date(new Date(d.getTime()).setDate(d.getDate() - subDays));
 			},
 			overlapsDisabledDates(){
-				for (var key in this.disabledEndDates) {
-					if ((this.disabledEndDates[key] <= this.eDate && this.disabledEndDates[key] >= this.sDate)) {
+				for (var key in this.disabledDates) {
+					if ((this.disabledDates[key] <= this.eDate && this.disabledDates[key] >= this.sDate)) {
 						return true;
 					}
 				}
