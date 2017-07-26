@@ -12,19 +12,19 @@
                             :name="start_name" v-model="sDate" :disabled="disabled_start"
                             :bootstrap-styling="bootstrapStyles" :highlighted="highlighted_obj" v-bind="$attrs"></datepicker>
             </div>
-            <slot name="button">
-                <div class="form-group" :class="{ 'col-sm-2' : bootstrapRow }">
-                    <button type="submit" class="btn btn-primary btn-block"
-                            @click="submitIt($event)" v-bind="$attrs">{{ submitText }}
-                    </button>
-                </div>
-            </slot>
             <div class="form-group" :class="{ 'col-sm-5' : bootstrapRow }">
                 <label :for="end_id" v-if="endLabel != ''">{{ endLabel }}</label>
                 <datepicker :id="end_id"
                             :name="end_name" v-model="eDate" :disabled="disabled_end"
                             :bootstrap-styling="bootstrapStyles" :highlighted="highlighted_obj" v-bind="$attrs"></datepicker>
             </div>
+			<slot name="button">
+				<div class="form-group" :class="{ 'col-sm-2' : bootstrapRow }">
+					<button type="submit" class="btn btn-primary btn-block"
+							@click="submitIt($event)" v-bind="$attrs">{{ submitText }}
+					</button>
+				</div>
+			</slot>
         </fieldset>
     </div>
 </template>
