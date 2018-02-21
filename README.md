@@ -5,7 +5,7 @@ Component utilizing VueJS-Datepicker for a Data Range Select for VueJs.
 
 ## Installation
 ---------------
-###npm
+### npm
 ``` sh
 npm install --save vuejs-range-datepickers
 ```
