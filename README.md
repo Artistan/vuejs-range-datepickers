@@ -178,8 +178,12 @@ Available languages
 
 ## Live Example
 ---------------
-I have created an [example](https://www.webpackbin.com/bins/-KpBRW5ApXMKlUxne80q) vue webapp (documentation [here](https://github.com/Artistan/vuejs-range-datepickers#readme)), demonstrating this range date selector via simple vue app.
+[![Edit vuejs-range-datepickers Example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/wy9p95p245)  
+demonstrating this range date selector via simple vue app.
 
+## Documentation 
+
+[readme](https://github.com/Artistan/vuejs-range-datepickers#readme))
 
 ## TODOs
 ---------------
